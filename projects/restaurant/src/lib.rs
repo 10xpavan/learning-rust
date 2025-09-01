@@ -1,9 +1,4 @@
-mod frontofhouse {
-    pub mod hosting{
-        pub fn addtowaitlist() {}
-
-    }
-}
+mod frontofhouse {}
 
 pub fn eatatrestaurant() {
     crate::frontofhouse::hosting::addtowaitlist();
