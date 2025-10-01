@@ -1,25 +1,33 @@
-use std::env;         //this is used to interact with the engivornment
+use std::env;        
 use std::fs;
+use std::process;
 fn main() {
-    let args: Vec<String> = env::args().collect();         //this thing collects the arguments over the command line and sends it to store in the verctorized string format
-    
-    //let query = &args[1];
-    //let file_path = &args[2];
+    let args: Vec<String> = env::args().collect();
+    let config = Config::new(&args).unwrap_or_else(|err| {
+        println!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
 
-    //println!("Searching for {query}");
-    //println!("In the file {file_path}");
-    
-    
-    //println!("in file heheboi");
-    //let contents = fs::read_to_string("B:\\notes\\rust-world\\ripgerp\\heheboi.txt")
-         //.expect("should have been able to read the file");
+    println!("Searching for {}", config.query);
+    println!("In file {}", config.filepath);
 
-    //println!("with text:\n{contents}");
-    let (query, file_path) = prase_config(&args);
+    let content = fs::read_to_string(config.filepath)
+        .expect("Something went wrong reading the file");
+    println!("With content:\n{}", content);
 }
 
-fn prase_config(args: &[String]) -> (&str, &str) {
-    let query = &args[1];
-    let file_path = &args[2];
-    (query, file_path)
+struct Config {
+    query: String,
+    filepath: String,
+}
+
+impl Config {
+    fn new(args: &[String]) -> Result<Config, &str> {
+        if args.len() < 3 {
+            return Err("Not enough arguments");
+        }
+        let query = args[1].clone();
+        let filepath = args[2].clone();
+        Ok(Config {query, filepath})
+    }
 }
